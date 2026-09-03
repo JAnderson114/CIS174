@@ -21,7 +21,7 @@ namespace Ch02FutueValueAnderson.Models
             for (int i = 0; i < months; i++)
             {
                 futureValue = (futureValue + MonthlyInvestment) *
-                    (1 + YearlyInvestment);
+                    (1 + monthlyInterestRate);
             }
             return futureValue;
         }
