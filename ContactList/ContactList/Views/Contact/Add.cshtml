@@ -1,0 +1,36 @@
+﻿@model Contact
+
+@{
+    ViewData["Title"] = "Add Contact";
+}
+
+<h2>Add Contact</h2>
+
+<form asp-action="Add" method="post">
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Name</label>
+        <input asp-for="Name" class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Phone" class="form-label">Phone Number</label>
+        <input asp-for="Phone" class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label">Address</label>
+        <input asp-for="Address" class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Note" class="form-label">Note</label>
+        <textarea asp-for="Note" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Contact</button>
+    <a asp-controller="Home" asp-action="Index"
+       class="btn btn-primary">Cancel</a>
+</form>
