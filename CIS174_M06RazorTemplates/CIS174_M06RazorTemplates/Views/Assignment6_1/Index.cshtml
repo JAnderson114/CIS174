@@ -1,0 +1,30 @@
+﻿@model CIS174_M06RazorTemplates.Models.StudentViewModel
+
+@{
+    ViewData["Title"] = "Assignment 6.1";
+}
+
+<h1>Assignment 6.1</h1>
+
+@if (Model.AccessLevel < 2)
+{
+    <p>You do not have a sufficient access level to view this data.</p>
+}
+else if (Model.AccessLevel >= 2 && Model.AccessLevel < 8)
+{
+    @foreach (var student in Model.Students)
+    {
+        <partial name="_StudentPartial" model="student" />
+    }
+}
+else
+{
+    <p>Hello Admin</p>
+
+    @foreach (var student in Model.Students)
+    {
+        <div>
+            @student.FirstName @student.LastName - @student.Grade
+        </div>
+    }
+}
