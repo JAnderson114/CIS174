@@ -1,0 +1,117 @@
+﻿@model IEnumerable<CIS174_M06RazorTemplates.Models.OlympicCountry>
+
+@{
+    ViewData["Title"] = "Assignment 7.1 - Olympic Games";
+
+    string Active(string filter, string selected)
+    {
+        return filter == selected ? "active-filter" : "";
+    }
+}
+
+<style>
+    .list-group-item.active-filter {
+        background-color: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+        font-weight: bold;
+    }
+
+    .list-group-item:hover {
+        background-color: #e9ecef;
+        color: #212529;
+    }
+
+    .list-group-item.active-filter:hover {
+        background-color: #0b5ed7;
+        color: white;
+    }
+
+    .flag-image {
+        width: 100px;
+        height: 65px;
+        object-fit: contain;
+        border: 1px solid #ddd;
+    }
+</style>
+
+<h2 class="text-center mt-3">Olympic Games</h2>
+
+<div class="row">
+
+    <div class="col-md-3">
+
+        <h4>Olympic Games</h4>
+
+        <div class="list-group">
+            <a asp-controller="Assignment7_1"
+               asp-action="Index"
+               asp-route-activeGame="all"
+               asp-route-activeCategory="@ViewBag.ActiveCategory"
+               class="list-group-item @Active("all", (string)ViewBag.ActiveGame)">
+                ALL
+            </a>
+
+            @foreach (string game in ViewBag.Games)
+            {
+                <a asp-controller="Assignment7_1"
+                   asp-action="Index"
+                   asp-route-activeGame="@game"
+                   asp-route-activeCategory="@ViewBag.ActiveCategory"
+                   class="list-group-item @Active(game, (string)ViewBag.ActiveGame)">
+                    @game
+                </a>
+            }
+        </div>
+
+        <h4 class="mt-3">Category</h4>
+
+        <div class="list-group">
+            <a asp-controller="Assignment7_1"
+               asp-action="Index"
+               asp-route-activeGame="@ViewBag.ActiveGame"
+               asp-route-activeCategory="all"
+               class="list-group-item @Active("all", (string)ViewBag.ActiveCategory)">
+                ALL
+            </a>
+
+            @foreach (string category in ViewBag.Categories)
+            {
+                <a asp-controller="Assignment7_1"
+                   asp-action="Index"
+                   asp-route-activeGame="@ViewBag.ActiveGame"
+                   asp-route-activeCategory="@category"
+                   class="list-group-item @Active(category, (string)ViewBag.ActiveCategory)">
+                    @category
+                </a>
+            }
+        </div>
+
+    </div>
+
+    <div class="col-md-9">
+
+        <ul class="list-inline">
+            @foreach (var country in Model)
+            {
+                <li class="list-inline-item text-center m-2"
+                    style="width: 120px;">
+
+                    <img src="@country.FlagImage"
+                         alt="@country.Country"
+                         title="@country.Country | @country.Game | @country.Sport / @country.Category"
+                         class="flag-image" />
+
+                    <div>@country.Country</div>
+                </li>
+            }
+        </ul>
+
+        @if (!Model.Any())
+        {
+            <p>No countries match your selection.</p>
+        }
+
+    </div>
+
+</div>
