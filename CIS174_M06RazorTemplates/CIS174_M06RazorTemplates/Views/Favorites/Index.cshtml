@@ -1,0 +1,79 @@
+﻿@model List<CIS174_M06RazorTemplates.Models.OlympicCountry>
+
+@{
+    ViewData["Title"] = "My Favorite Olympic Countries";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">My Favorite Olympic Countries</h2>
+
+    @if (TempData["message"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["message"]
+        </div>
+    }
+
+    <div class="text-center mb-4">
+        <a asp-controller="Assignment7_1"
+           asp-action="Index"
+           class="btn btn-primary">
+            Return to Home Page
+        </a>
+
+        <form asp-controller="Favorites"
+              asp-action="Delete"
+              method="post"
+              class="d-inline">
+
+            <button type="submit"
+                    class="btn btn-danger"
+                    onclick="return confirm('Are you sure you want to clear your favorites?');">
+                Clear Favorites
+            </button>
+        </form>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <p class="text-center">
+            You have no favorite countries yet.
+            Return to the Olympic Games page to add some.
+        </p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var country in Model.OrderBy(c => c.Country))
+            {
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <img src="@country.FlagImage"
+                                 alt="@country.Country flag"
+                                 class="img-fluid mb-3"
+                                 style="width: 120px; border: 1px solid #ddd;" />
+
+                            <h5 class="card-title">@country.Country</h5>
+
+                            <p class="card-text">
+                                <strong>Game:</strong> @country.Game
+                                <br />
+                                <strong>Sport:</strong> @country.Sport
+                                <br />
+                                <strong>Category:</strong> @country.Category
+                            </p>
+
+                            <a asp-controller="Assignment7_1"
+                               asp-action="Details"
+                               asp-route-id="@country.Country"
+                               class="btn btn-outline-primary">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

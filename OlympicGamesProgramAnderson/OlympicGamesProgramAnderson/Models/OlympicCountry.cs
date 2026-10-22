@@ -1,6 +1,11 @@
 ﻿namespace OlympicGamesProgramAnderson.Models
 {
-    public class OlympicGames
+    public class OlympicCountry
     {
+        public string Country { get; set; } = string.Empty;
+        public string Game { get; set; } = string.Empty;
+        public string Sport { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public string FlagImage { get; set; } = string.Empty;
     }
 }

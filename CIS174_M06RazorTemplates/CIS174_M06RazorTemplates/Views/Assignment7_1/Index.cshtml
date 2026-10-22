@@ -33,9 +33,32 @@
         object-fit: contain;
         border: 1px solid #ddd;
     }
+
+    .country-flag {
+        display: inline-block;
+        text-decoration: none;
+        color: #212529;
+    }
+
+        .country-flag:hover {
+            color: #0d6efd;
+        }
+
+    .country-item {
+        width: 120px;
+        vertical-align: top;
+    }
 </style>
 
 <h2 class="text-center mt-3">Olympic Games</h2>
+
+<div class="text-end mb-3">
+    <a asp-controller="Favorites"
+       asp-action="Index"
+       class="btn btn-success">
+        My Favorite Countries
+    </a>
+</div>
 
 <div class="row">
 
@@ -92,19 +115,31 @@
     <div class="col-md-9">
 
         <ul class="list-inline">
-            @foreach (var country in Model)
+
+            @foreach (var country in Model.OrderBy(c => c.Country))
             {
-                <li class="list-inline-item text-center m-2"
-                    style="width: 120px;">
+                <li class="list-inline-item text-center m-2 country-item">
 
-                    <img src="@country.FlagImage"
-                         alt="@country.Country"
-                         title="@country.Country | @country.Game | @country.Sport / @country.Category"
-                         class="flag-image" />
+                    <a asp-controller="Assignment7_1"
+                       asp-action="Details"
+                       asp-route-id="@country.Country"
+                       asp-route-activeGame="@ViewBag.ActiveGame"
+                       asp-route-activeCategory="@ViewBag.ActiveCategory"
+                       title="@country.Country | @country.Game | @country.Sport / @country.Category"
+                       class="country-flag">
 
-                    <div>@country.Country</div>
+                        <img src="@country.FlagImage"
+                             alt="@country.Country flag"
+                             title="@country.Country | @country.Game | @country.Sport / @country.Category"
+                             class="flag-image" />
+
+                        <div>@country.Country</div>
+
+                    </a>
+
                 </li>
             }
+
         </ul>
 
         @if (!Model.Any())

@@ -1,18 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CIS174_M06RazorTemplates.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CIS174_M06RazorTemplates.Controllers
 {
     public class Assignment7_1Controller : Controller
     {
-        public IActionResult Index(
-            string activeGame = "all",
-            string activeCategory = "all")
+        private List<OlympicCountry> GetCountries()
         {
-            var countries = new List<OlympicCountry>
+            return new List<OlympicCountry>
             {
                 new OlympicCountry { Country = "Austria", Game = "Paralympic Games", Sport = "Canoe Sprint", Category = "Outdoor", FlagImage = "https://flagcdn.com/w80/at.png" },
                 new OlympicCountry { Country = "Brazil", Game = "Summer Olympics", Sport = "Road Cycling", Category = "Outdoor", FlagImage = "https://flagcdn.com/w80/br.png" },
@@ -39,6 +34,13 @@ namespace CIS174_M06RazorTemplates.Controllers
                 new OlympicCountry { Country = "Uruguay", Game = "Paralympic Games", Sport = "Archery", Category = "Indoor", FlagImage = "https://flagcdn.com/w80/uy.png" },
                 new OlympicCountry { Country = "Zimbabwe", Game = "Paralympic Games", Sport = "Canoe Sprint", Category = "Outdoor", FlagImage = "https://flagcdn.com/w80/zw.png" }
             };
+        }
+
+        public IActionResult Index(
+            string activeGame = "all",
+            string activeCategory = "all")
+        {
+            var countries = GetCountries();
 
             ViewBag.ActiveGame = activeGame;
             ViewBag.ActiveCategory = activeCategory;
@@ -62,19 +64,80 @@ namespace CIS174_M06RazorTemplates.Controllers
 
             if (activeGame != "all")
             {
-                query = query.Where(
-                    c => c.Game == activeGame);
+                query = query.Where(c => c.Game == activeGame);
             }
 
             if (activeCategory != "all")
             {
-                query = query.Where(
-                    c => c.Category == activeCategory);
+                query = query.Where(c => c.Category == activeCategory);
             }
 
-            var filteredCountries = query.ToList();
+            return View(query.ToList());
+        }
 
-            return View(filteredCountries);
+        [HttpGet]
+        public IActionResult Details(
+            string id,
+            string activeGame = "all",
+            string activeCategory = "all")
+        {
+            var country = GetCountries()
+                .FirstOrDefault(c => c.Country == id);
+
+            if (country == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.ActiveGame = activeGame;
+            ViewBag.ActiveCategory = activeCategory;
+
+            var session = new OlympicSession(HttpContext.Session);
+            ViewBag.IsFavorite = session.IsFavorite(country.Country);
+
+            return View(country);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Add(
+            string country,
+            string activeGame = "all",
+            string activeCategory = "all")
+        {
+            var selectedCountry = GetCountries()
+                .FirstOrDefault(c => c.Country == country);
+
+            if (selectedCountry == null)
+            {
+                return NotFound();
+            }
+
+            var session = new OlympicSession(HttpContext.Session);
+            var favorites = session.GetFavorites();
+
+            if (!favorites.Any(c => c.Country == selectedCountry.Country))
+            {
+                favorites.Add(selectedCountry);
+                session.SetFavorites(favorites);
+
+                TempData["message"] =
+                    $"{selectedCountry.Country} added to your favorites.";
+            }
+            else
+            {
+                TempData["message"] =
+                    $"{selectedCountry.Country} is already in your favorites.";
+            }
+
+            return RedirectToAction(
+                nameof(Details),
+                new
+                {
+                    id = selectedCountry.Country,
+                    activeGame,
+                    activeCategory
+                });
         }
     }
 }

@@ -1,0 +1,71 @@
+﻿@model CIS174_M06RazorTemplates.Models.OlympicCountry
+
+@{
+    ViewData["Title"] = "Olympic Country Details";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Olympic Country Details</h2>
+
+    @if (TempData["message"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["message"]
+        </div>
+    }
+
+    <div class="card mx-auto text-center" style="max-width: 500px;">
+        <div class="card-body">
+            <img src="@Model.FlagImage"
+                 alt="@Model.Country flag"
+                 class="img-fluid mb-3"
+                 style="width: 160px; border: 1px solid #ddd;" />
+
+            <h3>@Model.Country</h3>
+
+            <p><strong>Game:</strong> @Model.Game</p>
+            <p><strong>Sport:</strong> @Model.Sport</p>
+            <p><strong>Category:</strong> @Model.Category</p>
+
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                <a asp-controller="Assignment7_1"
+                   asp-action="Index"
+                   asp-route-activeGame="@ViewBag.ActiveGame"
+                   asp-route-activeCategory="@ViewBag.ActiveCategory"
+                   class="btn btn-primary">
+                    Return to Home Page
+                </a>
+
+                @if (!(bool)ViewBag.IsFavorite)
+                {
+                    <form asp-controller="Assignment7_1"
+                          asp-action="Add"
+                          method="post">
+
+                        <input type="hidden"
+                               name="country"
+                               value="@Model.Country" />
+
+                        <input type="hidden"
+                               name="activeGame"
+                               value="@ViewBag.ActiveGame" />
+
+                        <input type="hidden"
+                               name="activeCategory"
+                               value="@ViewBag.ActiveCategory" />
+
+                        <button type="submit" class="btn btn-success">
+                            Add to Favorites
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <span class="btn btn-outline-success">
+                        Already a Favorite
+                    </span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
