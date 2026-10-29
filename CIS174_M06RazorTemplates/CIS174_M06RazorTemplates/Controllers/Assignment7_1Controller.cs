@@ -36,14 +36,12 @@ namespace CIS174_M06RazorTemplates.Controllers
             };
         }
 
-        public IActionResult Index(
-            string activeGame = "all",
-            string activeCategory = "all")
+        public IActionResult Index(OlympicFilter filter)
         {
             var countries = GetCountries();
 
-            ViewBag.ActiveGame = activeGame;
-            ViewBag.ActiveCategory = activeCategory;
+            ViewBag.ActiveGame = filter.ActiveGame;
+            ViewBag.ActiveCategory = filter.ActiveCategory;
 
             ViewBag.Games = new List<string>
             {
@@ -59,17 +57,16 @@ namespace CIS174_M06RazorTemplates.Controllers
                 "Outdoor"
             };
 
-            IEnumerable<OlympicCountry> query =
-                countries.OrderBy(c => c.Country);
+            IEnumerable<OlympicCountry> query = countries.OrderBy(c => c.Country);
 
-            if (activeGame != "all")
+            if (filter.ActiveGame != "all")
             {
-                query = query.Where(c => c.Game == activeGame);
+                query = query.Where(c => c.Game == filter.ActiveGame);
             }
 
-            if (activeCategory != "all")
+            if (filter.ActiveCategory != "all")
             {
-                query = query.Where(c => c.Category == activeCategory);
+                query = query.Where(c => c.Category == filter.ActiveCategory);
             }
 
             return View(query.ToList());
@@ -81,8 +78,7 @@ namespace CIS174_M06RazorTemplates.Controllers
             string activeGame = "all",
             string activeCategory = "all")
         {
-            var country = GetCountries()
-                .FirstOrDefault(c => c.Country == id);
+            var country = GetCountries().FirstOrDefault(c => c.Country == id);
 
             if (country == null)
             {
@@ -93,6 +89,7 @@ namespace CIS174_M06RazorTemplates.Controllers
             ViewBag.ActiveCategory = activeCategory;
 
             var session = new OlympicSession(HttpContext.Session);
+
             ViewBag.IsFavorite = session.IsFavorite(country.Country);
 
             return View(country);
@@ -106,7 +103,7 @@ namespace CIS174_M06RazorTemplates.Controllers
             string activeCategory = "all")
         {
             var selectedCountry = GetCountries()
-                .FirstOrDefault(c => c.Country == country);
+                                  .FirstOrDefault(c => c.Country == country);
 
             if (selectedCountry == null)
             {
@@ -121,13 +118,11 @@ namespace CIS174_M06RazorTemplates.Controllers
                 favorites.Add(selectedCountry);
                 session.SetFavorites(favorites);
 
-                TempData["message"] =
-                    $"{selectedCountry.Country} added to your favorites.";
+                TempData["message"] = $"{selectedCountry.Country} added to your favorites.";
             }
             else
             {
-                TempData["message"] =
-                    $"{selectedCountry.Country} is already in your favorites.";
+                TempData["message"] = $"{selectedCountry.Country} is already in your favorites.";
             }
 
             return RedirectToAction(
