@@ -9,6 +9,7 @@
 <div asp-validation-summary="All" class="text-danger"></div>
 
 <form asp-controller="Tickets" asp-action="Add" method="post">
+
     <div class="mb-3">
         <label asp-for="Name" class="form-label">Ticket Name:</label>
         <input asp-for="Name" class="form-control" />
@@ -23,24 +24,28 @@
 
     <div class="mb-3">
         <label asp-for="SprintNumber" class="form-label">Sprint Number:</label>
-        <input asp-for="SprintNumber" type="number" min="1" class="form-control" />
+        <input asp-for="SprintNumber" type="number"
+               min="1" max="100" class="form-control" />
         <span asp-validation-for="SprintNumber" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="PointValue" class="form-label">Point Value:</label>
-        <input asp-for="PointValue" type="number"min="1" class="form-control" />
+        <input asp-for="PointValue" type="number"
+               min="1" max="100" class="form-control" />
         <span asp-validation-for="PointValue" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="Status" class="form-label">Status:</label>
         <select asp-for="Status" class="form-select">
+            <option value="">-- Select a Status --</option>
             <option value="To Do">To Do</option>
             <option value="In Progress">In Progress</option>
             <option value="QA">Quality Assurance (QA)</option>
             <option value="Done">Done</option>
         </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">
@@ -50,4 +55,9 @@
     <a asp-action="Index" class="btn btn-secondary">
         Cancel
     </a>
+
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

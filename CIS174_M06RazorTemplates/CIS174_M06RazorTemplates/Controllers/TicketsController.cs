@@ -9,7 +9,8 @@ namespace CIS174_M06RazorTemplates.Controllers
 
         private List<Ticket> GetTickets()
         {
-            return HttpContext.Session.GetObject<List<Ticket>>(TicketsKey) ?? new List<Ticket>();
+            return HttpContext.Session.GetObject<List<Ticket>>(TicketsKey)
+                   ?? new List<Ticket>();
         }
 
         private void SaveTickets(List<Ticket> tickets)
@@ -40,15 +41,19 @@ namespace CIS174_M06RazorTemplates.Controllers
             {
                 var tickets = GetTickets();
 
-                ticket.Id = tickets.Count == 0 ? 1 : tickets.Max(t => t.Id) + 1;
+                ticket.Id = tickets.Count == 0
+                    ? 1
+                    : tickets.Max(t => t.Id) + 1;
 
                 tickets.Add(ticket);
                 SaveTickets(tickets);
 
                 return RedirectToAction(nameof(Index));
             }
-
-            return View(ticket);
+            else
+            {
+                return View(ticket);
+            }
         }
 
         [HttpPost]
