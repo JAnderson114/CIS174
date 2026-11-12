@@ -5,22 +5,16 @@ namespace CIS174_M06RazorTemplates.Controllers
 {
     public class TicketsController : Controller
     {
-        private const string TicketsKey = "tickets";
+        private readonly TicketsContext context;
 
-        private List<Ticket> GetTickets()
+        public TicketsController(TicketsContext context)
         {
-            return HttpContext.Session.GetObject<List<Ticket>>(TicketsKey)
-                   ?? new List<Ticket>();
-        }
-
-        private void SaveTickets(List<Ticket> tickets)
-        {
-            HttpContext.Session.SetObject(TicketsKey, tickets);
+            this.context = context;
         }
 
         public IActionResult Index()
         {
-            var tickets = GetTickets()
+            var tickets = context.Tickets
                 .OrderBy(t => t.Id)
                 .ToList();
 
@@ -39,14 +33,8 @@ namespace CIS174_M06RazorTemplates.Controllers
         {
             if (ModelState.IsValid)
             {
-                var tickets = GetTickets();
-
-                ticket.Id = tickets.Count == 0
-                    ? 1
-                    : tickets.Max(t => t.Id) + 1;
-
-                tickets.Add(ticket);
-                SaveTickets(tickets);
+                context.Tickets.Add(ticket);
+                context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
             }
@@ -60,18 +48,14 @@ namespace CIS174_M06RazorTemplates.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UpdateStatus(int id, string status)
         {
-            var tickets = GetTickets();
-
-            var ticket = tickets.FirstOrDefault(t => t.Id == id);
+            var ticket = context.Tickets.Find(id);
 
             if (ticket != null &&
-                (status == "To Do" ||
-                 status == "In Progress" ||
-                 status == "QA" ||
-                 status == "Done"))
+                (status == "To Do" || status == "In Progress" ||
+                 status == "QA" || status == "Done"))
             {
                 ticket.Status = status;
-                SaveTickets(tickets);
+                context.SaveChanges();
             }
 
             return RedirectToAction(nameof(Index));
@@ -81,14 +65,12 @@ namespace CIS174_M06RazorTemplates.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            var tickets = GetTickets();
-
-            var ticket = tickets.FirstOrDefault(t => t.Id == id);
+            var ticket = context.Tickets.Find(id);
 
             if (ticket != null)
             {
-                tickets.Remove(ticket);
-                SaveTickets(tickets);
+                context.Tickets.Remove(ticket);
+                context.SaveChanges();
             }
 
             return RedirectToAction(nameof(Index));

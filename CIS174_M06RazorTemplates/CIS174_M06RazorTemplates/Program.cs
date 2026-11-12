@@ -1,7 +1,10 @@
+using CIS174_M06RazorTemplates.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddMemoryCache();
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(20);
@@ -10,6 +13,10 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<TicketsContext>(
+  options => options.UseSqlServer(
+    builder.Configuration.GetConnectionString("TicketsContext")));
 
 var app = builder.Build();
 
@@ -31,9 +38,8 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
+  name: "default",
+  pattern: "{controller=Home}/{action=Index}/{id?}")
+  .WithStaticAssets();
 
 app.Run();
