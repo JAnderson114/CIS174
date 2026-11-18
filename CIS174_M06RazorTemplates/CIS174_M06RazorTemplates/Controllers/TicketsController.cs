@@ -1,22 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CIS174_M06RazorTemplates.Models;
+using CIS174_M06RazorTemplates.Repositories;
 
 namespace CIS174_M06RazorTemplates.Controllers
 {
     public class TicketsController : Controller
     {
-        private readonly TicketsContext context;
+        private readonly ITicketRepository data;
 
-        public TicketsController(TicketsContext context)
+        public TicketsController(ITicketRepository rep)
         {
-            this.context = context;
+            data = rep;
         }
 
         public IActionResult Index()
         {
-            var tickets = context.Tickets
-                .OrderBy(t => t.Id)
-                .ToList();
+            var tickets = data.List();
 
             return View(tickets);
         }
@@ -33,29 +32,27 @@ namespace CIS174_M06RazorTemplates.Controllers
         {
             if (ModelState.IsValid)
             {
-                context.Tickets.Add(ticket);
-                context.SaveChanges();
+                data.Add(ticket);
+                data.Save();
 
                 return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                return View(ticket);
-            }
+
+            return View(ticket);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateStatus(int id, string status)
         {
-            var ticket = context.Tickets.Find(id);
+            var ticket = data.Get(id);
 
             if (ticket != null &&
                 (status == "To Do" || status == "In Progress" ||
                  status == "QA" || status == "Done"))
             {
                 ticket.Status = status;
-                context.SaveChanges();
+                data.Save();
             }
 
             return RedirectToAction(nameof(Index));
@@ -65,12 +62,12 @@ namespace CIS174_M06RazorTemplates.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            var ticket = context.Tickets.Find(id);
+            var ticket = data.Get(id);
 
             if (ticket != null)
             {
-                context.Tickets.Remove(ticket);
-                context.SaveChanges();
+                data.Delete(ticket);
+                data.Save();
             }
 
             return RedirectToAction(nameof(Index));

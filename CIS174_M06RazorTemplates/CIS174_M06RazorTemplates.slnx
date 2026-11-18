@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="CIS174_M06RazorTemplates.Tests/CIS174_M06RazorTemplates.Tests.csproj" Id="7539ae5b-4de7-4c20-8d2e-6ef8a47f8b35" />
   <Project Path="CIS174_M06RazorTemplates/CIS174_M06RazorTemplates.csproj" />
 </Solution>

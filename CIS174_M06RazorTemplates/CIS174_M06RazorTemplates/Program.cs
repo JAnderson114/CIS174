@@ -1,10 +1,12 @@
 using CIS174_M06RazorTemplates.Models;
+using CIS174_M06RazorTemplates.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDistributedMemoryCache();
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(20);
@@ -17,6 +19,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<TicketsContext>(
   options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("TicketsContext")));
+
+builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 
 var app = builder.Build();
 
@@ -32,7 +36,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
-
 app.UseAuthorization();
 
 app.MapStaticAssets();
